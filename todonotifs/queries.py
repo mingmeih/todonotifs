@@ -1,5 +1,19 @@
 import sqlite3
 from sqlite3 import Error
+import dateutil.parser as parser
+
+def to_iso(datestr):
+    if datestr:
+        date = parser.parse(datestr)
+        return date.isoformat()
+    else:
+        return None
+
+def is_valid_date(datestr):
+    try:
+        return to_iso(datestr)
+    except:
+        return False
 
 def run_query(query, params):
     try:
@@ -12,12 +26,12 @@ def run_query(query, params):
             c = conn.cursor()
             print(params)
             c.execute(query, params)
-            data = c.fetchall()
-            if len(data) == 0:
+            if query.startswith('SELECT'):
+                data = c.fetchall()
+            else:
                 data = c.lastrowid
             conn.commit()
             conn.close()
-            print("data: ", data)
             return data
 
 # Todos
@@ -35,8 +49,10 @@ get_all_todos = '''SELECT * FROM todos ORDER BY date;'''
 
 get_all_notifs = '''SELECT * FROM notifications ORDER BY datetime;'''
 
-add_notif = '''INSERT INTO notifications (name, date, subject, priority) 
-                VALUES (?, ?, ?, ?);'''
+get_notif_by_todo = '''SELECT * FROM notifications WHERE "todo-id" = ?;'''
+
+add_notif = '''INSERT INTO notifications ("todo-id", datetime) 
+                VALUES (?, ?);'''
 
 
 # Subjects

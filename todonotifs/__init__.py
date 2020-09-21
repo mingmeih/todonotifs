@@ -12,15 +12,16 @@ def create_tables(db_file):
     finally:
         if conn:
             c = conn.cursor()
-            c.execute('''CREATE TABLE IF NOT EXISTS subjects (name TEXT PRIMARY KEY, icon TEXT);''')
+            c.execute('''CREATE TABLE IF NOT EXISTS subjects (name TEXT PRIMARY KEY, icon TEXT);''') # todo: add option of uploading custom icon
             c.execute('''CREATE TABLE IF NOT EXISTS todos 
                         (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date INTEGER, subject TEXT DEFAULT misc,
                         FOREIGN KEY(subject) REFERENCES subjects(name)
                         ON DELETE CASCADE);''')
             c.execute('''CREATE TABLE IF NOT EXISTS notifications 
-                        ("todo-id" INTEGER NOT NULL PRIMARY KEY, datetime INTEGER, message TEXT DEFAULT "Upcoming task!", repeat INTEGER DEFAULT 0,
+                        (id INTEGER NOT NULL PRIMARY KEY, "todo-id" INTEGER NOT NULL, datetime TEXT,
                         FOREIGN KEY("todo-id") REFERENCES todos(id))''')
             c.execute(''' INSERT OR IGNORE INTO subjects(name, icon) VALUES("misc", "default_notification.ico");''')
+            c.execute(''' INSERT INTO todos(name, date) VALUES(NULL, NULL);''')
             conn.commit()
             conn.close()
 

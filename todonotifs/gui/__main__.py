@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QLabel, QVBoxLayout, QLineEdit, QGroupBox
 from PyQt5.QtSql import QSqlDatabase
-from PyQt5.QtCore import pyqtSlot
 from PyQt5 import QtGui
-from todonotifs.gui.todo_list import Todo_item_list, to_iso
+from todonotifs.gui.todo_list import Todo_item_list
 
-import todonotifs.gui.queries as queries
+import todonotifs.queries as queries
+import todonotifs.notif as notif
 import sys 
 import dateutil.parser
 
@@ -30,17 +30,12 @@ class Window(QWidget):
         self.setGeometry(0, 0, 400, 600) 
         self.show()
         
-    
-
 
 def main():
-
+    notif.start()
     app = QApplication(sys.argv)
-
     app.setStyle('Fusion')
-
     window = Window()
-
     sys.exit(app.exec_())
 
 
