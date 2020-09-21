@@ -1,6 +1,7 @@
 import sqlite3 as lite
 import dateutil.parser as parser
 from datetime import datetime, timedelta
+import asyncio
 
 import todonotifs.queries as queries
 import todonotifs.notif as notif
@@ -70,11 +71,8 @@ class Todo_item(QLineEdit):
         queries.run_query(queries.remove_todo, [self.id])
         self.parent_list.todo_items = [item for item in self.parent_list.todo_items if item[0] != self.id]
         self.hide()
-
-    def focusOutEvent(self, event):
-
-        super().focusOutEvent(event)
-        
+    
+    async def edit_todo(self):
         params = valid_todo(self.text())
         if params:
             queries.run_query(queries.edit_todo, list(params.values()) + [self.id])
@@ -83,10 +81,12 @@ class Todo_item(QLineEdit):
                 for time in DEFAULT_NOTIF_TIMES:
                     notif_time = parser.parse(params['date']) - time
                     if notif_time > datetime.now():
-                        notif.add_notification(params, self.id, notif_time)
-
+                        await notif.add_notification(params, self.id, notif_time)
         elif self.text().strip() == "":
                 self.delete_todo()
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
 
 
     def keyPressEvent(self, event):

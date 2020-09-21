@@ -19,18 +19,18 @@ def send_notification(title, message):
             timeout = 20,
         )
 
-def add_notification(params, todo_id, notif_time=None):
-    if params['date']:
-        date = parse(params['date'])
-        title = date.strftime("%a %b %d %I:%M %p")
-        if params['subject']:
-            title += params['subject']
-        message = params['name']
+async def add_notification(params, todo_id, notif_time=None):
+    date = parse(params['date'])
+    title = date.strftime("%a %b %d %I:%M %p")
+    if params['subject']:
+        title += params['subject']
+    message = params['name']
         #new_notif_id = str(queries.run_query(queries.add_notif, [todo_id, notif_time]))
-        if notif_time:
-            job = sched.add_job(send_notification, "date", [title, message], next_run_time = notif_time, replace_existing = True)
-            queries.run_query(queries.add_notif_todo_id, [todo_id, job.id])
-            print("Notification set for:", notif_time)
+        
+    job = sched.add_job(send_notification, "date", [title, message], next_run_time = notif_time, replace_existing = True)
+    queries.run_query(queries.add_notif_todo_id, [todo_id, job.id])
+    print("Notification set for:", notif_time)
+    return job.id
         #else:
          #   sched.add_job(send_notification, "cron", [title, message], hour = 12, id = new_notif_id) # repeats daily at 12 pm by default, will add option to customize daily reminders
 
