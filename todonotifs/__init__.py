@@ -17,13 +17,13 @@ def create_tables(db_file):
                         (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date INTEGER, subject TEXT DEFAULT misc,
                         FOREIGN KEY(subject) REFERENCES subjects(name)
                         ON DELETE CASCADE);''')
-            c.execute('''CREATE TABLE IF NOT EXISTS notifications 
-                        (id INTEGER NOT NULL PRIMARY KEY, "todo-id" INTEGER NOT NULL, datetime TEXT,
-                        FOREIGN KEY("todo-id") REFERENCES todos(id))''')
+            c.execute('''CREATE TABLE IF NOT EXISTS notifs
+                        (id TEXT NOT NULL PRIMARY KEY, todo_id INTEGER, next_run_time TEXT, job_state BLOB,
+                        FOREIGN KEY(todo_id) REFERENCES todos(id))''')
             c.execute(''' INSERT OR IGNORE INTO subjects(name, icon) VALUES("misc", "default_notification.ico");''')
             c.execute(''' INSERT INTO todos(name, date) VALUES(NULL, NULL);''')
             conn.commit()
             conn.close()
 
 if __name__ == '__main__':
-    create_tables(r"resources\sqlite\notifs.db")
+    create_tables(r"resources\sqlite\todos.db")

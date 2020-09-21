@@ -72,6 +72,9 @@ class Todo_item(QLineEdit):
         self.hide()
 
     def focusOutEvent(self, event):
+
+        super().focusOutEvent(event)
+        
         params = valid_todo(self.text())
         if params:
             queries.run_query(queries.edit_todo, list(params.values()) + [self.id])
@@ -85,7 +88,6 @@ class Todo_item(QLineEdit):
         elif self.text().strip() == "":
                 self.delete_todo()
 
-        super().focusOutEvent(event)
 
     def keyPressEvent(self, event):
         
