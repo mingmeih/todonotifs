@@ -15,33 +15,30 @@ def send_notification(title, message):
     notification.notify(
             title = title,
             message = message,
-            app_icon = r"resources\icons\default_notification.ico",
+            app_icon = r"resources\icons\default_notification.ico", # customize according to subject icon later
             timeout = 20,
         )
 
-async def add_notification(params, todo_id, notif_time=None):
+def add_notification(params, todo_id, notif_time=None):
     date = parse(params['date'])
     title = date.strftime("%a %b %d %I:%M %p")
     if params['subject']:
         title += params['subject']
     message = params['name']
-        #new_notif_id = str(queries.run_query(queries.add_notif, [todo_id, notif_time]))
-        
-    job = sched.add_job(send_notification, "date", [title, message], next_run_time = notif_time, replace_existing = True)
-    queries.run_query(queries.add_notif_todo_id, [todo_id, job.id])
-    print("Notification set for:", notif_time)
-    return job.id
-        #else:
-         #   sched.add_job(send_notification, "cron", [title, message], hour = 12, id = new_notif_id) # repeats daily at 12 pm by default, will add option to customize daily reminders
+    if notif_time:
+        job = sched.add_job(send_notification, "date", [title, message], next_run_time = notif_time, replace_existing = True)
+        queries.run_query(queries.add_notif_todo_id, [todo_id, job.id])
+        print("Notification set for:", notif_time)
+    # todo: if date is not specified run cron job repeating every day
 
 def delete_notifications(todo_id):
-    #notifications = queries.run_query(queries.get_notif_by_todo, [todo_id])
-    #for i in notifications:
-     #   notif_id = i[0]
-      #  sched.remove_job(str(notif_id))
+    notifications = queries.run_query(queries.get_notif_by_todo, [todo_id])
+    for i in notifications:
+       notif_id = i[0]
+       sched.remove_job(notif_id)
     return True
 
 def start():
     if sched.state == STATE_STOPPED:
-        print('Notifier started.')
         sched.start()
+        print('Notifier started.')

@@ -18,13 +18,11 @@ def is_valid_date(datestr):
 def run_query(query, params):
     try:
         conn = sqlite3.connect(r"resources\sqlite\todos.db")
-        print(sqlite3.version)
     except Error as e:
         print(e)
     finally:
         if conn:
             c = conn.cursor()
-            print(params)
             c.execute(query, params)
             if query.startswith('SELECT'):
                 data = c.fetchall()
@@ -45,7 +43,7 @@ edit_todo = '''UPDATE todos SET name = ?, date = ?, subject = ? WHERE id=?'''
 
 get_all_todos = '''SELECT * FROM todos ORDER BY date;'''
 
-# Notifications
+# Notification table
 
 get_all_notifs = '''SELECT * FROM notifs ORDER BY datetime;'''
 
@@ -56,7 +54,7 @@ add_notif = '''INSERT INTO notifs ("todo-id", datetime)
 add_notif_todo_id = '''UPDATE notifs SET todo_id = ? WHERE id = ?'''
 
 
-# Subjects
+# Subjects - will add option to manage these later
 
 change_icon = ''''''
 
